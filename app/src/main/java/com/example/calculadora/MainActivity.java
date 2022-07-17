@@ -2,6 +2,7 @@ package com.example.calculadora;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,7 +16,7 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 import java.text.BreakIterator;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button numerozero;
     private Button numeroum;
@@ -37,10 +38,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button ponto;
     private Button porcentagem;
 
-
     private ImageView backspace;
     private TextView expressao, resultado;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,47 +74,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 TextView expressao = findViewById(R.id.expressao);
                 String string = expressao.getText().toString();
 
-                if(!string.isEmpty()){
+                if (!string.isEmpty()) {
                     byte var0 = 0;
-                    int var1 = string.length() -1;
+                    int var1 = string.length() - 1;
                     String txtExpressao = string.substring(var0, var1);
                     expressao.setText(txtExpressao);
                 }
-                resultado.setText("");
+
+//                resultado.setText("");
             }
         });
 
         igual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Expression expression = new ExpressionBuilder(expressao.getText().toString()).build();
-                double result = expression.evaluate();
-                long longResult = (long) result;
+                try {
 
-                if (result == (double) longResult){
+                    Expression expression = new ExpressionBuilder(expressao.getText().toString()).build();
+                    double result = expression.evaluate();
+                    long longResult = (long) result;
 
-                    resultado.setText((CharSequence) String.valueOf(longResult));
+                    if (result == (double) longResult) {
 
-                }else {
-                    resultado.setText((CharSequence) String.valueOf(resultado));
+                        resultado.setText((CharSequence) String.valueOf(longResult));
 
+                    } else {
+                        resultado.setText((CharSequence) String.valueOf(result));
+
+                    }
+
+                } catch (Exception e) {
+                    resultado.setText(e.toString());
                 }
             }
         });
 
 
-
-
-
-
-
-
-
-
-
     }
 
-    private void IniciarComponente(){
+    private void IniciarComponente() {
         numerozero = findViewById(R.id.zero);
         numeroum = findViewById(R.id.um);
         numerodois = findViewById(R.id.dois);
@@ -140,21 +137,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         resultado = findViewById(R.id.resultado);
 
 
-
-
     }
 
-    public void AscrecentarExpressao(String string, boolean limpar_dados){
+    public void AscrecentarExpressao(String string, boolean limpar_dados) {
 
-        if(resultado.getText().equals("")){
+
+        if (resultado.getText().equals("")) {
             expressao.setText(" ");
         }
 
-        if(limpar_dados){
+        if (limpar_dados) {
             resultado.setText(" ");
             expressao.append(string);
-        }else{
-            expressao.append(resultado.getText());
+        } else {
+//            expressao.append(resultado.getText());
             expressao.append(string);
             resultado.setText(" ");
 
@@ -163,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
 
             case R.id.zero:
                 AscrecentarExpressao("0", true);
@@ -209,6 +205,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.multiplicacao:
                 AscrecentarExpressao("*", false);
+                break;
+            case R.id.porcentagem:
+                AscrecentarExpressao("%", false);
                 break;
             case R.id.abre_colchetes:
                 AscrecentarExpressao("(", true);
